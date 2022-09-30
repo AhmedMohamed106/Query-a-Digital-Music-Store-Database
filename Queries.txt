@@ -1,0 +1,51 @@
+/* Query 1 */ 
+
+/* return the sum of each  customer total amount they paid in a transaction  */
+
+
+SELECT Customer.CustomerId,
+       SUM(Invoice.Total)AS Sum_of_total_affairs
+FROM Customer
+JOIN Invoice on(Customer.CustomerId == Invoice.CustomerId)
+GROUP BY Customer.CustomerId;
+
+
+
+
+/* Query 2 */ /* return number of albums each artist whom did more than one in desc order*/
+SELECT Artist.Name,
+       count(Album.AlbumId)AS number_ofAllbums
+FROM Artist
+JOIN Album on(Artist.ArtistId == Album.ArtistId)
+GROUP BY Artist.Name
+HAVING number_ofAllbums>1
+ORDER BY number_ofAllbums DESC ;
+
+
+
+
+/* Query 3 */ /* What Media Type did customers prefer buy?*/
+SELECT mt.name,
+       COUNT(DISTINCT c.customerid) Customers
+FROM customer c
+JOIN invoice i ON c.customerid = i.customerid
+JOIN invoiceline iv ON i.invoiceid = iv.invoiceid
+JOIN Track t ON iv.trackid = t.trackid
+JOIN MediaType mt ON mt.mediatypeid = t.mediatypeid
+GROUP BY mt.name
+ORDER BY c.customerid DESC;
+
+
+
+/*Query 4*/ /* Top 10 Albums based ON sales?*/
+SELECT a.albumid,
+       a.title,
+       ar.name AS Artist_Name,
+       SUM(iv.unitprice * iv.quantity) AS Sales
+FROM Artist ar
+JOIN Album a ON ar.artistid = a.artistid
+JOIN Track t ON a.albumid = t.albumid
+JOIN InvoiceLine iv ON iv.trackid = t.trackid
+GROUP BY a.albumid
+ORDER BY Sales DESC
+LIMIT 10;

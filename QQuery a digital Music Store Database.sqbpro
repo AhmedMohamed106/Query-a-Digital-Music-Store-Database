@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/hfcs/Desktop/chinook.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3954"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,7:mainInvoice"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Album" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="61"/><column index="2" value="300"/><column index="3" value="59"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Artist" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="59"/><column index="2" value="300"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Customer" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="4" mode="0"/></sort><column_widths><column index="1" value="83"/><column index="2" value="71"/><column index="3" value="83"/><column index="4" value="294"/><column index="5" value="264"/><column index="6" value="132"/><column index="7" value="44"/><column index="8" value="96"/><column index="9" value="80"/><column index="10" value="128"/><column index="11" value="122"/><column index="12" value="183"/><column index="13" value="98"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Genre" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="59"/><column index="2" value="112"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Invoice" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="68"/><column index="2" value="83"/><column index="3" value="129"/><column index="4" value="264"/><column index="5" value="132"/><column index="6" value="80"/><column index="7" value="96"/><column index="8" value="116"/><column index="9" value="40"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="InvoiceLine" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="94"/><column index="2" value="68"/><column index="3" value="56"/><column index="4" value="65"/><column index="5" value="64"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="MediaType" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="90"/><column index="2" value="164"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Playlist" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="67"/><column index="2" value="155"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Track" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="2" mode="1"/></sort><column_widths><column index="1" value="56"/><column index="2" value="300"/><column index="3" value="61"/><column index="4" value="90"/><column index="5" value="59"/><column index="6" value="300"/><column index="7" value="84"/><column index="8" value="63"/><column index="9" value="65"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">/* Query 1 */
+/* return the Email,FirstName , LastName , Genre Name for customers whom thier emails 
+starts ith A and the Genre name related to them is Rock or world  */
+
+SELECT Customer.Email, Customer.FirstName, Customer.LastName, Genre.Name
+from Customer 
+JOIN
+Invoice
+on(Customer.CustomerId == Invoice.CustomerId)
+JOIN
+InvoiceLine
+on(Invoice.InvoiceId == InvoiceLine.InvoiceId)
+JOIN
+Track
+on(InvoiceLine.TrackId == Track.TrackId)
+JOIN
+Genre
+on(Track.GenreId == Genre.GenreId)
+
+
+
+where Customer.Email like 'A%' and Genre.Name ='Rock'
+
+
+order by Customer.Email;
+
+
+
+/* Query 2 */
+/* return the sum of each  customer total amount they paid in a transaction  */
+
+
+select Customer.CustomerId, SUM(Invoice.Total)as Sum_of_total_affairs
+
+from Customer
+
+JOIN Invoice
+
+on(Customer.CustomerId == Invoice.CustomerId)
+
+GROUP by Customer.CustomerId;
+
+
+/* Query 3 */
+/* return number of albums each artist whom did more than one in desc order*/
+
+
+select Artist.Name , count(Album.AlbumId)as number_ofAllbums
+
+from Artist
+JOIN
+Album
+on(Artist.ArtistId == Album.ArtistId)
+
+
+group by Artist.Name
+
+HAVING number_ofAllbums&gt;1
+
+ORDER by number_ofAllbums DESC
+
+;
+
+
+
+/* Query 4 */
+/* for each Customer Live in Tucson  , return sum of total , name , Address ,Album Title he listned, track Name , artist name of the track  */
+
+select SUM(Invoice.Total), Customer.FirstName , Customer.Address 
+ , Track.Name , Album.Title, Artist.Name  
+from Customer
+JOIN Invoice
+on(Customer.CustomerId == Invoice.CustomerId)
+
+JOIN
+InvoiceLine
+on(Invoice.InvoiceId == InvoiceLine.InvoiceId)
+JOIN
+Track
+on(InvoiceLine.TrackId  == Track.TrackId)
+
+JOIN
+Album
+on(Track.AlbumId==Album.AlbumId)
+
+JOIN Artist
+on(Artist.ArtistId = Album.ArtistId)
+
+WHERE Customer.City == &quot;Tucson&quot;
+
+GROUP by Artist.Name ;
+
+
+/*QUESTION 5 Top 10 Albums based on sales?*/
+
+SELECT a.albumid, a.title, ar.name AS Artist_Name, SUM(iv.unitprice * iv.quantity) AS Sales
+FROM Artist ar
+JOIN Album a
+ON ar.artistid = a.artistid
+JOIN Track t
+ON a.albumid = t.albumid
+JOIN InvoiceLine iv
+ON iv.trackid = t.trackid
+GROUP BY a.albumid
+ORDER BY Sales DESC
+LIMIT 10;
+
+
+/*Query 6 2 Top 10 Albums based on sales?*/
+
+SELECT a.albumid, a.title, ar.name AS Artist_Name, SUM(iv.unitprice * iv.quantity) AS Sales
+FROM Artist ar
+JOIN Album a
+ON ar.artistid = a.artistid
+JOIN Track t
+ON a.albumid = t.albumid
+JOIN InvoiceLine iv
+ON iv.trackid = t.trackid
+GROUP BY a.albumid
+ORDER BY Sales DESC
+LIMIT 10;</sql><sql name="2">/*QUESTION 2 Top 10 Albums based on sales?*/
+
+SELECT a.albumid, a.title, ar.name AS Artist_Name, SUM(iv.unitprice * iv.quantity) AS Sales
+FROM Artist ar
+JOIN Album a
+ON ar.artistid = a.artistid
+JOIN Track t
+ON a.albumid = t.albumid
+JOIN InvoiceLine iv
+ON iv.trackid = t.trackid
+GROUP BY a.albumid
+ORDER BY Sales DESC
+LIMIT 10;</sql><current_tab id="0"/></tab_sql></sqlb_project>
